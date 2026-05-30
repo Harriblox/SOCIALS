@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARRIBLOX // UNIT-01_HUD_V20</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Share+Tech+Mono&family=Noto+Sans+JP:wght@900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #ff6600;
+            --orange-dim: rgba(255,102,0,0.15);
+            --orange-glow: rgba(255,102,0,0.5);
+            --red: #ff003c;
+            --bg: #060608;
+            --panel: rgba(255,102,0,0.03);
+            --border: rgba(255,102,0,0.45);
+            --eva-purple: #711F8C;
+            --eva-green: #6bff00;
+            --hazard: repeating-linear-gradient(-45deg, var(--orange), var(--orange) 8px, #000 8px, #000 16px);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+
+        body {
+            background: var(--bg);
+            color: var(--orange);
+            font-family: 'Share Tech Mono', monospace;
+            overflow: hidden;
+            height: 100vh; width: 100vw;
+            perspective: 3000px;
+            text-transform: uppercase;
+            font-size: 15px;
+        }
+
+        /* ── SCANLINES ── */
+        body::after {
+            content: '';
+            position: fixed; inset: 0; z-index: 9000; pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+        }
+
+        /* ══════════════════════════════
+           1. AUTH GATE
+        ══════════════════════════════ */
+        #entry-gate {
+            position: fixed; inset: 0; background: #000;
+            z-index: 100000; display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, transform 1s cubic-bezier(0.76,0,0.24,1);
+            padding: 20px;
+        }
+        .auth-box {
+            width: 100%; max-width: 480px;
+            border: 1px solid var(--orange);
+            background: rgba(255,102,0,0.02);
+            padding: 48px 40px 40px;
+            text-align: center;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% 88%, 90% 100%, 0 100%);
+        }
+        .auth-box::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--orange);
+        }
+        .auth-tag {
+            display: inline-block;
+            background: var(--red); color: #fff;
+            font-size: 9px; letter-spacing: 3px; padding: 3px 12px;
+            margin-bottom: 24px;
+        }
+        .auth-title {
+            font-family: 'Syncopate'; font-size: clamp(1.4rem, 4vw, 2rem);
+            letter-spacing: 12px; color: var(--orange);
+            margin-bottom: 28px;
+        }
+        .magi-row {
+            display: flex; gap: 8px; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .magi-node {
+            border: 1px solid var(--orange); padding: 5px 14px;
+            font-size: 9px; letter-spacing: 2px; opacity: 0.4; transition: 0.3s;
+        }
+        .magi-node.lit {
+            opacity: 1; background: var(--orange); color: #000;
+            box-shadow: 0 0 20px var(--orange-glow);
+        }
+        .auth-sub { font-size: 10px; opacity: 0.4; margin-bottom: 28px; letter-spacing: 2px; }
+        .auth-btn {
+            width: 100%; padding: 16px; border: 1px solid var(--orange);
+            background: transparent; color: var(--orange);
+            font-family: 'Syncopate'; font-size: 11px; letter-spacing: 6px;
+            cursor: pointer !important; transition: 0.25s;
+        }
+        .auth-btn:hover {
+            background: var(--orange); color: #000;
+            box-shadow: 0 0 40px var(--orange-glow);
+        }
+
+        /* ══════════════════════════════
+           2. BG LAYERS
+        ══════════════════════════════ */
+        #video-layer { position: fixed; inset: 0; z-index: -2; opacity: 0.25; pointer-events: none; }
+        #bg-video { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.6) contrast(1.4); }
+        #corruption-overlay {
+            position: fixed; inset: 0; z-index: 5000; pointer-events: none; opacity: 0;
+            background: radial-gradient(circle, transparent 20%, var(--eva-purple) 100%);
+            mix-blend-mode: exclusion; transition: opacity 0.1s;
+        }
+        .berserk-label {
+            font-family: 'Noto Sans JP'; font-size: 14vw;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            opacity: 0; pointer-events: none; color: var(--eva-green); z-index: 6000;
+            letter-spacing: 0.1em;
+        }
+
+        /* ══════════════════════════════
+           3. CROSSHAIR
+        ══════════════════════════════ */
+        .ch-v {
+            position: fixed; top: 0; width: 1px; height: 100vh;
+            background: var(--orange); opacity: 0.2; pointer-events: none; z-index: 200000;
+        }
+        .ch-h {
+            position: fixed; left: 0; height: 1px; width: 100vw;
+            background: var(--orange); opacity: 0.2; pointer-events: none; z-index: 200000;
+        }
+        .ch-box {
+            position: fixed; width: 20px; height: 20px;
+            border: 1px solid rgba(255,255,255,0.8);
+            transform: translate(-50%,-50%); pointer-events: none;
+            z-index: 200000; mix-blend-mode: difference;
+        }
+
+        /* ══════════════════════════════
+           4. MAIN HUD LAYOUT
+        ══════════════════════════════ */
+        .hud {
+            display: grid;
+            grid-template-columns: 380px 1fr 300px;
+            grid-template-rows: auto 1fr auto;
+            gap: 0;
+            height: 100vh;
+            width: 100vw;
+            padding: 0 0 72px 0;
+            transform-style: preserve-3d;
+            opacity: 0;
+            transition: opacity 0.8s 0.4s;
+        }
+        .hud.active { opacity: 1; }
+
+        /* ── TOP STRIP ── */
+        .hud-top {
+            grid-column: 1 / -1;
+            height: 54px;
+            display: flex; align-items: stretch;
+            border-bottom: 2px solid var(--border);
+            background: rgba(0,0,0,0.6);
+        }
+        .top-brand {
+            display: flex; align-items: center; gap: 16px;
+            padding: 0 28px;
+            border-right: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+        .top-brand .brand-tag {
+            font-size: 11px; letter-spacing: 3px; opacity: 0.4;
+        }
+        .top-brand h1 {
+            font-family: 'Syncopate'; font-size: 1.15rem;
+            letter-spacing: 4px; color: var(--orange); line-height: 1;
+        }
+        .top-meta {
+            display: flex; align-items: center; gap: 0;
+            flex: 1;
+        }
+        .top-meta-item {
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 0 28px; height: 100%;
+            border-right: 2px solid var(--border);
+            font-size: 11px;
+        }
+        .top-meta-item .label { opacity: 0.35; letter-spacing: 2px; margin-bottom: 3px; }
+        .top-meta-item .value { color: #fff; letter-spacing: 1px; }
+        .top-meta-item .value.orange { color: var(--orange); }
+        .top-right-bar {
+            display: flex; align-items: center;
+            padding: 0 20px; gap: 10px; margin-left: auto;
+            border-left: 2px solid var(--border);
+        }
+        #clock {
+            font-family: 'Syncopate'; font-size: 1.15rem;
+            letter-spacing: 3px; color: #fff;
+        }
+
+        /* ── LEFT PANEL ── */
+        .hud-left {
+            grid-column: 1; grid-row: 2;
+            display: flex; flex-direction: column;
+            border-right: 2px solid var(--border);
+            overflow: hidden;
+            padding: 12px 0;
+            gap: 0;
+        }
+
+        /* ── CENTER PANEL ── */
+        .hud-center {
+            grid-column: 2; grid-row: 2;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            padding: 12px 0;
+            gap: 12px;
+        }
+
+        /* ── RIGHT PANEL ── */
+        .hud-right {
+            grid-column: 3; grid-row: 2;
+            display: flex; flex-direction: column;
+            border-left: 2px solid var(--border);
+            overflow: hidden;
+            padding: 12px 0;
+            gap: 12px;
+        }
+
+        /* ── PANEL BLOCK (reusable section inside panels) ── */
+        .panel-block {
+            border-bottom: 2px solid var(--border);
+            padding: 20px 24px;
+            position: relative;
+            margin-bottom: 0;
+        }
+        .panel-block + .panel-block {
+            margin-top: 12px;
+        }
+        .panel-block.grow { flex: 1; overflow: auto; }
+        .panel-label {
+            font-size: 11px; letter-spacing: 3px; opacity: 0.4;
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .panel-label::before {
+            content: ''; display: inline-block;
+            width: 6px; height: 6px;
+            background: var(--orange); opacity: 0.6;
+        }
+
+        /* ── PILOT CARD ── */
+        .pilot-card { padding: 24px 20px 20px; border-bottom: 2px solid var(--border); margin-bottom: 12px; }
+        .pilot-name-tag { font-size: 11px; letter-spacing: 3px; opacity: 0.4; margin-bottom: 8px; }
+        .pilot-handle {
+            font-family: 'Syncopate'; font-size: 1.7rem;
+            letter-spacing: 2px; color: var(--orange);
+            white-space: nowrap; line-height: 1.1;
+        }
+        .pilot-meta { margin-top: 12px; font-size: 11px; opacity: 0.35; letter-spacing: 1px; line-height: 1.9; }
+        .hazard-stripe { height: 4px; background: var(--hazard); opacity: 0.3; margin-top: 12px; }
+
+        /* ── SYNC RATE ── */
+        .sync-block { padding: 20px; border-bottom: 2px solid var(--border); }
+        .sync-number {
+            font-family: 'Syncopate'; font-size: 3.4rem;
+            color: #fff; line-height: 1; margin: 8px 0 12px;
+        }
+        .sync-track {
+            height: 4px; background: rgba(255,102,0,0.12);
+            border: 1px solid rgba(255,102,0,0.25); position: relative;
+        }
+        .sync-fill {
+            position: absolute; top: 0; left: 0; height: 100%;
+            background: var(--orange); width: 0%;
+            transition: width 0.15s; box-shadow: 0 0 10px var(--orange-glow);
+        }
+
+        /* ── TACTICAL DATA ── */
+        .tactical-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px; background: transparent;
+            padding: 4px 4px 12px 4px;
+        }
+        .tac-cell {
+            background: rgba(255,102,0,0.03); padding: 22px 20px 20px;
+            border: 2px solid var(--border);
+            min-width: 0;
+        }
+        .tac-cell h3 { font-size: 12px; color: #fff; letter-spacing: 1px; margin-bottom: 6px; }
+        .tac-cell p { font-size: 11px; opacity: 0.35; line-height: 1.6; text-transform: none; }
+        .tac-cell::before {
+            content: ''; display: block;
+            width: 18px; height: 2px;
+            background: var(--orange); opacity: 0.7;
+            margin-bottom: 8px;
+        }
+
+        /* ── TERMINAL FEED ── */
+        .terminal-feed {
+            font-size: 11px; opacity: 0.45; overflow: hidden;
+            display: flex; flex-direction: column; gap: 1px;
+            flex: 1;
+        }
+        .log-line { padding: 3px 0; border-bottom: 1px solid rgba(255,102,0,0.04); letter-spacing: 1px; }
+
+        /* ── DISCORD PANEL ── */
+        .discord-status {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 11px; letter-spacing: 2px; opacity: 0.65;
+            margin-bottom: 14px;
+        }
+        .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .dot-green  { background: #6bff00; box-shadow: 0 0 8px #6bff00; }
+        .dot-yellow { background: #ffcc00; box-shadow: 0 0 8px #ffcc00; }
+        .dot-orange { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
+        .dot-grey   { background: #444; }
+
+        .act-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+        }
+        .act-card {
+            background: rgba(255,102,0,0.04);
+            border: 1px solid var(--border);
+            border-top: 2px solid rgba(255,102,0,0.5);
+            padding: 16px 18px 16px;
+            position: relative; overflow: hidden;
+            animation: fadeUp 0.35s ease forwards;
+        }
+        .act-card.full { grid-column: 1 / -1; }
+        @keyframes fadeUp { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+        .act-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,102,0,0.04), transparent 60%);
+        }
+        .act-card-type { font-size: 10px; letter-spacing: 3px; opacity: 0.38; margin-bottom: 6px; }
+        .act-card-name { font-size: 0.92rem; color: #fff; font-weight: bold; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .act-card-sub  { font-size: 10px; color: var(--orange); opacity: 0.55; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .act-card-dot  { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; }
+        .act-no-signal { font-size: 12px; opacity: 0.3; text-align: center; padding: 24px 0; letter-spacing: 3px; grid-column: 1 / -1; }
+
+        /* ── BOTTOM NAV ── */
+        .hud-nav {
+            grid-column: 1 / -1; grid-row: 3;
+            height: 72px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 6px;
+            padding: 8px 28px;
+            border-top: 2px solid var(--border);
+            background: rgba(0,0,0,0.92);
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            z-index: 10000;
+        }
+        .nav-id {
+            font-size: 9px; opacity: 0.25; letter-spacing: 3px;
+            order: 3;
+        }
+        .nav-links { display: flex; gap: 36px; order: 1; }
+        .nav-links a {
+            color: var(--orange); text-decoration: none;
+            font-size: 12px; letter-spacing: 3px; opacity: 0.7;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .nav-links a:hover { opacity: 1; color: #fff; transform: translateY(-1px); /* glow added below */ }
+        .nav-copyright {
+            font-size: 9px; opacity: 1; letter-spacing: 2px;
+            order: 2; color: var(--orange);
+            text-shadow: 0 0 6px var(--orange), 0 0 14px var(--orange), 0 0 30px var(--orange-glow);
+            animation: copyrightPulse 3s ease-in-out infinite;
+        }
+        .nav-copyright span { margin: 0 6px; opacity: 0.6; }
+        @keyframes copyrightPulse {
+            0%, 100% { text-shadow: 0 0 6px var(--orange), 0 0 14px var(--orange), 0 0 30px var(--orange-glow); }
+            50%       { text-shadow: 0 0 10px var(--orange), 0 0 24px var(--orange), 0 0 50px var(--orange-glow), 0 0 80px var(--orange-glow); }
+        }
+
+        /* ══════════════════════════════
+           5. MOBILE
+        ══════════════════════════════ */
+        @media (max-width: 768px) {
+            *, *::before, *::after { cursor: auto !important; }
+            body { overflow-y: auto; overflow-x: hidden; height: auto; perspective: none; }
+
+            .ch-v, .ch-h, .ch-box { display: none; }
+
+            .auth-box { padding: 32px 20px 28px; clip-path: none; }
+            .auth-title { letter-spacing: 6px; font-size: 1.2rem; }
+
+            .hud {
+                display: flex; flex-direction: column;
+                height: auto; padding-bottom: 90px;
+                opacity: 1;
+                transform: none !important;
+            }
+            .hud-top {
+                height: auto; flex-wrap: wrap;
+                padding: 10px 16px; gap: 10px; align-items: flex-start;
+            }
+            .top-brand { padding: 0; border: none; }
+            .top-meta { flex-wrap: wrap; gap: 0; }
+            .top-meta-item { padding: 4px 12px 4px 0; border: none; }
+            .top-right-bar { padding: 0; border: none; margin-left: 0; }
+            #clock { font-size: 0.85rem; }
+
+            .hud-left, .hud-center, .hud-right {
+                border: none; border-bottom: 2px solid var(--border);
+            }
+
+            .pilot-handle { font-size: 1.3rem; }
+            .sync-number { font-size: 2rem; }
+
+            .tactical-grid { grid-template-columns: 1fr 1fr; }
+
+            .act-grid { grid-template-columns: 1fr; }
+            .act-card.full { grid-column: 1; }
+
+            .hud-nav {
+                height: auto;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 10px 16px;
+                gap: 5px;
+            }
+            .nav-links {
+                gap: 16px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .nav-links a { font-size: 10px; letter-spacing: 2px; }
+            .nav-copyright { font-size: 9px; letter-spacing: 1px; text-align: center; }
+            .nav-id { display: none; }
+            .hud { padding-bottom: 90px; }
+        }
+
+        @media (max-width: 420px) {
+            .tactical-grid { grid-template-columns: 1fr; }
+            .top-meta { display: none; }
+            .nav-links { gap: 12px; }
+            .nav-links a { font-size: 9px; }
+        }
+
+        /* ── GLOW ON HOVER ── */
+
+        /* Nav links */
+        .nav-links a:hover {
+            opacity: 1; color: #fff; transform: translateY(-1px);
+            text-shadow: 0 0 8px var(--orange), 0 0 20px var(--orange), 0 0 40px var(--orange-glow);
+        }
+
+        /* Pilot handle */
+        .pilot-handle {
+            transition: text-shadow 0.3s;
+        }
+        .pilot-handle:hover {
+            text-shadow: 0 0 10px var(--orange), 0 0 25px var(--orange), 0 0 50px var(--orange-glow);
+        }
+
+        /* Top brand H1 */
+        .top-brand h1 {
+            transition: text-shadow 0.3s;
+        }
+        .top-brand h1:hover {
+            text-shadow: 0 0 10px var(--orange), 0 0 25px var(--orange), 0 0 50px var(--orange-glow);
+        }
+
+        /* Top meta values */
+        .top-meta-item .value {
+            transition: text-shadow 0.3s;
+        }
+        .top-meta-item:hover .value {
+            text-shadow: 0 0 8px currentColor, 0 0 20px currentColor;
+        }
+
+        /* Panel labels */
+        .panel-label {
+            transition: text-shadow 0.3s, opacity 0.3s;
+        }
+        .panel-label:hover {
+            opacity: 0.85;
+            text-shadow: 0 0 8px var(--orange), 0 0 20px var(--orange-glow);
+        }
+
+        /* Tac cell headers */
+        .tac-cell h3 {
+            transition: text-shadow 0.3s, color 0.3s;
+        }
+        .tac-cell:hover h3 {
+            color: var(--orange);
+            text-shadow: 0 0 8px var(--orange), 0 0 20px var(--orange-glow);
+        }
+        .tac-cell {
+            transition: background 0.25s;
+        }
+        .tac-cell:hover {
+            background: rgba(255,102,0,0.05);
+        }
+
+        /* Discord status */
+        .discord-status {
+            transition: text-shadow 0.3s;
+        }
+        .discord-status:hover {
+            text-shadow: 0 0 8px var(--orange), 0 0 18px var(--orange-glow);
+        }
+
+        /* Act card name */
+        .act-card-name {
+            transition: text-shadow 0.3s;
+        }
+        .act-card:hover .act-card-name {
+            text-shadow: 0 0 8px #fff, 0 0 20px rgba(255,255,255,0.4);
+        }
+        .act-card {
+            transition: border-color 0.25s, background 0.25s;
+        }
+        .act-card:hover {
+            border-top-color: var(--orange);
+            background: rgba(255,102,0,0.08);
+        }
+
+        /* Sync number */
+        .sync-number {
+            transition: text-shadow 0.3s;
+        }
+        .sync-number:hover {
+            text-shadow: 0 0 12px #fff, 0 0 30px rgba(255,255,255,0.5);
+        }
+
+        /* Clock */
+        #clock {
+            transition: text-shadow 0.3s;
+        }
+        #clock:hover {
+            text-shadow: 0 0 10px #fff, 0 0 25px rgba(255,255,255,0.5);
+        }
+
+        /* Terminal log lines */
+        .log-line {
+            transition: text-shadow 0.2s, opacity 0.2s;
+        }
+        .log-line:hover {
+            opacity: 0.9;
+            text-shadow: 0 0 6px var(--orange), 0 0 15px var(--orange-glow);
+        }
+
+        /* Nav ID */
+        .nav-id {
+            transition: text-shadow 0.3s, opacity 0.3s;
+        }
+        .nav-id:hover {
+            opacity: 0.7;
+            text-shadow: 0 0 8px var(--orange), 0 0 20px var(--orange-glow);
+        }
+
+        /* ── MUSIC BUTTON ── */
+        #music-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--orange);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px; letter-spacing: 2px;
+            padding: 4px 10px;
+            display: flex; align-items: center; gap: 6px;
+            cursor: pointer !important;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        #music-btn:hover {
+            background: var(--orange-dim);
+            box-shadow: 0 0 12px var(--orange-glow);
+        }
+        #music-btn.muted {
+            opacity: 0.35;
+            border-color: rgba(255,102,0,0.2);
+        }
+        #music-icon {
+            font-size: 13px;
+            animation: musicPulse 1.2s ease-in-out infinite;
+        }
+        #music-btn.muted #music-icon {
+            animation: none;
+        }
+        #music-btn svg {
+            display: block;
+            animation: musicPulse 1.2s ease-in-out infinite;
+        }
+        #music-btn.muted svg {
+            animation: none;
+        }
+        #viz-mute-btn svg {
+            display: block;
+            animation: musicPulse 1.2s ease-in-out infinite;
+        }
+        #viz-mute-btn.muted svg {
+            animation: none;
+        }
+        @keyframes musicPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(1.15); }
+        }
+
+        /* ── AUDIO VISUALIZER ── */
+        .viz-label {
+            font-size: 9px; letter-spacing: 3px; opacity: 0.35;
+            margin-top: 18px; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .viz-label::before {
+            content: ''; display: inline-block;
+            width: 6px; height: 6px;
+            background: var(--orange); opacity: 0.6;
+        }
+        .viz-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        #viz-canvas {
+            width: 100%;
+            height: 80px;
+            display: block;
+            opacity: 0.85;
+        }
+        #viz-mute-btn {
+            position: absolute;
+            top: 6px; right: 6px;
+            background: rgba(6,6,8,0.75);
+            border: 1px solid var(--border);
+            color: var(--orange);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px; letter-spacing: 2px;
+            padding: 3px 8px;
+            display: flex; align-items: center; gap: 5px;
+            cursor: pointer !important;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+        #viz-mute-btn:hover {
+            background: var(--orange-dim);
+            box-shadow: 0 0 10px var(--orange-glow);
+        }
+        #viz-mute-btn.muted {
+            opacity: 0.45;
+            border-color: rgba(255,102,0,0.2);
+        }
+        #viz-mute-icon {
+            font-size: 11px;
+        }
+        #viz-mute-btn:not(.muted) #viz-mute-icon {
+            animation: musicPulse 1.2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="entry-gate">
+    <div class="auth-box">
+        <div class="auth-tag">ID_VERIFICATION_REQUIRED</div>
+        <div class="auth-title">HARRIBLOX</div>
+        <div class="magi-row">
+            <div class="magi-node" id="m1">MELCHIOR</div>
+            <div class="magi-node" id="m2">BALTHASAR</div>
+            <div class="magi-node" id="m3">CASPER</div>
+        </div>
+        <div class="auth-sub">PILOT: harri_fire // NEURAL LINK: STANDBY</div>
+        <button class="auth-btn" onclick="bootHUD()">INITIALIZE</button>
+    </div>
+</div>
+
+<!-- BG -->
+<div id="video-layer"><video id="bg-video" loop muted playsinline><source src="https://assets.mixkit.co/videos/preview/mixkit-urban-scenery-with-passing-trains-at-night-41584-large.mp4" type="video/mp4"></video></div>
+<audio id="bg-music" loop>
+    <source src="https://raw.githubusercontent.com/Harriblox/SOCIALS/main/BROOKLYNBLOODPOP.mp3" type="audio/mpeg">
+</audio>
+<div id="corruption-overlay"></div>
+<div class="berserk-label" id="berserk-ui">暴走</div>
+
+<!-- CROSSHAIR -->
+<div class="ch-v" id="ch-v"></div>
+<div class="ch-h" id="ch-h"></div>
+<div class="ch-box" id="ch-box"></div>
+
+<!-- HUD -->
+<div class="hud" id="cockpit">
+
+    <!-- TOP STRIP -->
+    <div class="hud-top">
+        <div class="top-brand">
+            <span class="brand-tag">UNIT-01</span>
+            <h1>HARRIBLOX</h1>
+        </div>
+        <div class="top-meta">
+            <div class="top-meta-item">
+                <span class="label">STATUS</span>
+                <span class="value orange">OPERATIONAL</span>
+            </div>
+            <div class="top-meta-item">
+                <span class="label">PILOT</span>
+                <span class="value">HARRI_FIRE</span>
+            </div>
+            <div class="top-meta-item">
+                <span class="label">LCL</span>
+                <span class="value">NOMINAL</span>
+            </div>
+            <div class="top-meta-item">
+                <span class="label">DEPTH</span>
+                <span class="value">1250M</span>
+            </div>
+        </div>
+        <div class="top-right-bar">
+            <button id="music-btn" onclick="toggleMusic()" title="Toggle Music">
+                <svg id="icon-unmute" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                </svg>
+                <svg id="icon-mute" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <line x1="23" y1="9" x2="17" y2="15"/>
+                    <line x1="17" y1="9" x2="23" y2="15"/>
+                </svg>
+            </button>
+            <div id="clock">00:00:00</div>
+        </div>
+    </div>
+
+    <!-- LEFT PANEL -->
+    <div class="hud-left">
+        <!-- Pilot card -->
+        <div class="pilot-card">
+            <div class="pilot-name-tag">PILOT_DESIGNATION</div>
+            <div class="pilot-handle">HARRIBLOX</div>
+            <div class="hazard-stripe"></div>
+            <div class="pilot-meta">
+                PLUG DEPTH: 1250M<br>
+                AT_FIELD: ACTIVE<br>
+                SYNC: <span id="sync-left">0.0%</span>
+            </div>
+        </div>
+
+        <!-- Sync rate -->
+        <div class="sync-block" style="flex:1;">
+            <div class="panel-label">SYNCHRO_RATE</div>
+            <div class="sync-number" id="sync-val">0.0%</div>
+            <div class="sync-track"><div class="sync-fill" id="sync-bar"></div></div>
+            <div class="viz-label">AUDIO_WAVEFORM</div>
+            <div class="viz-wrapper">
+                <canvas id="viz-canvas"></canvas>
+                <button id="viz-mute-btn" onclick="toggleMusic()" title="Toggle Music">
+                    <svg id="viz-icon-unmute" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                    </svg>
+                    <svg id="viz-icon-mute" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <line x1="23" y1="9" x2="17" y2="15"/>
+                        <line x1="17" y1="9" x2="23" y2="15"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CENTER PANEL -->
+    <div class="hud-center">
+        <!-- DISCORD ACTIVITY — TOP -->
+        <div class="panel-block" style="border-bottom: 2px solid var(--border);">
+            <div class="panel-label">DISCORD_ACTIVITY</div>
+            <div id="discord-status-row" class="discord-status">
+                <div class="status-dot dot-grey"></div>
+                <span>HARRI_FIRE // CONNECTING</span>
+            </div>
+            <div class="act-grid" id="discord-panel">
+                <div class="act-no-signal">[ AWAITING SIGNAL ]</div>
+            </div>
+        </div>
+
+        <!-- TACTICAL DATA FILES — BOTTOM -->
+        <div class="panel-block grow" style="border-bottom: 2px solid var(--border); overflow: auto; padding-bottom: 16px;">
+            <div class="panel-label">TACTICAL_DATA_FILES</div>
+            <div class="tactical-grid">
+                <div class="tac-cell"><h3>ROBLOX_DEV</h3><p>Architecture, physics overrides &amp; Luau scripting.</p></div>
+                <div class="tac-cell"><h3>CYBERSECURITY</h3><p>Vulnerability research &amp; NERV encryption protocols.</p></div>
+                <div class="tac-cell"><h3>BLENDER_GFX</h3><p>Hard-surface modeling &amp; cinematic tactical GFX.</p></div>
+                <div class="tac-cell"><h3>ANIMATION</h3><p>Advanced kinematics &amp; rigged skeleton systems.</p></div>
+                <div class="tac-cell"><h3>IoT_ENG</h3><p>Sensor integration &amp; real-time data harvesting.</p></div>
+                <div class="tac-cell"><h3>PC_EXPERT</h3><p>System building. Support: Sun 9–10 PM IST.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: MAGI LOG -->
+    <div class="hud-right">
+        <div class="panel-block grow">
+            <div class="panel-label">MAGI_LOG_OUTPUT</div>
+            <div class="terminal-feed" id="log-content"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- NAV BAR -->
+<nav class="hud-nav">
+    <div class="nav-links">
+        <a href="https://www.roblox.com/users/2395342458/profile" target="_blank">ROBLOX</a>
+        <a href="https://www.youtube.com/@HARRI_MC" target="_blank">YOUTUBE</a>
+        <a href="https://www.instagram.com/harriblox/" target="_blank">INSTAGRAM</a>
+        <a href="https://open.spotify.com/playlist/19KnClzUZvv9m0SwS8KkSI" target="_blank">SPOTIFY</a>
+        <a href="#" onclick="alert('Discord: harri_fire'); return false;">DISCORD</a>
+    </div>
+    <div class="nav-copyright">
+        MADE BY HARRIBLOX <span>//</span> DESIGNED BY LAKSH
+    </div>
+    <div class="nav-id">NERV_STATION_COMMAND // ID: PILOT-01-V20</div>
+</nav>
+
+<script>
+const DISCORD_ID = "827209669276598332";
+const isMobile = () => window.innerWidth <= 768;
+
+/* ── BOOT ── */
+function bootHUD() {
+    ['m1','m2','m3'].forEach((id, i) =>
+        setTimeout(() => document.getElementById(id).classList.add('lit'), i * 280)
+    );
+    setTimeout(() => {
+        const gate = document.getElementById('entry-gate');
+        gate.style.opacity = '0';
+        gate.style.transform = 'translateY(-100%)';
+        setTimeout(() => {
+            gate.style.display = 'none';
+            document.getElementById('cockpit').classList.add('active');
+            document.getElementById('bg-video').play().catch(()=>{});
+            startMusic();
+            startTerminalFeed();
+            fetchDiscord();
+        }, 900);
+    }, 1100);
+}
+
+/* ── TERMINAL ── */
+function startTerminalFeed() {
+    const msgs = ["LCL_SYNCING","MAGI_ONLINE","PACKET_RCVD","LINK_STABLE","CORE_34C",
+                  "AT_FIELD_ACT","SCAN_PILOT","UPLINK_ON","VOLTS_1.22","SYNC_OK","EVA_READY"];
+    setInterval(() => {
+        const el = document.getElementById('log-content');
+        const d = document.createElement('div');
+        d.className = 'log-line';
+        d.textContent = `> ${msgs[Math.floor(Math.random()*msgs.length)]}... [${Math.random().toString(16).slice(2,6).toUpperCase()}]`;
+        el.prepend(d);
+        if (el.children.length > 24) el.lastChild.remove();
+    }, 2200);
+}
+
+/* ── CROSSHAIR + TILT ── */
+const chV = document.getElementById('ch-v');
+const chH = document.getElementById('ch-h');
+const chBox = document.getElementById('ch-box');
+const cockpit = document.getElementById('cockpit');
+const overlay = document.getElementById('corruption-overlay');
+const berserkUI = document.getElementById('berserk-ui');
+let lx = 0, ly = 0;
+
+document.addEventListener('mousemove', e => {
+    if (isMobile()) return;
+    const x = e.clientX, y = e.clientY;
+    chV.style.left = x + 'px';
+    chH.style.top  = y + 'px';
+    chBox.style.left = x + 'px';
+    chBox.style.top  = y + 'px';
+
+    const dx = x - innerWidth/2, dy = y - innerHeight/2;
+    const maxD = Math.hypot(innerWidth/2, innerHeight/2);
+    const pwr = Math.min(Math.hypot(dx,dy) / (maxD * 0.8), 1);
+    overlay.style.opacity = pwr;
+
+    if (pwr > 0.82) { document.body.style.color = 'var(--eva-green)'; berserkUI.style.opacity = (pwr-0.82)*5; }
+    else             { document.body.style.color = 'var(--orange)';    berserkUI.style.opacity = 0; }
+
+    cockpit.style.transform = `rotateX(${(innerHeight/2-y)/250}deg) rotateY(${(x-innerWidth/2)/250}deg)`;
+
+    const speed = Math.abs(x-lx) + Math.abs(y-ly);
+    lx = x; ly = y;
+    const sync = Math.min(speed * 1.5, 100).toFixed(1);
+    document.getElementById('sync-bar').style.width = sync + '%';
+    document.getElementById('sync-val').textContent = sync + '%';
+    document.getElementById('sync-left').textContent = sync + '%';
+});
+
+/* Touch sync */
+let ltx = 0, lty = 0;
+document.addEventListener('touchmove', e => {
+    if (!isMobile()) return;
+    const t = e.touches[0];
+    const speed = Math.abs(t.clientX-ltx) + Math.abs(t.clientY-lty);
+    ltx = t.clientX; lty = t.clientY;
+    const sync = Math.min(speed*3, 100).toFixed(1);
+    document.getElementById('sync-bar').style.width = sync + '%';
+    document.getElementById('sync-val').textContent = sync + '%';
+    document.getElementById('sync-left').textContent = sync + '%';
+}, { passive: true });
+
+/* ── CLOCK ── */
+setInterval(() => {
+    document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8);
+}, 1000);
+
+/* ── DISCORD ── */
+async function fetchDiscord() {
+    const panel = document.getElementById('discord-panel');
+    const statusRow = document.getElementById('discord-status-row');
+    try {
+        const res  = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+        const json = await res.json();
+        const data = json.data;
+        if (!data) { panel.innerHTML = '<div class="act-no-signal">[ NO DATA ]</div>'; return; }
+
+        /* status row */
+        const statusColors = { online:'dot-green', idle:'dot-yellow', dnd:'dot-orange', offline:'dot-grey' };
+        const statusText   = { online:'ONLINE', idle:'IDLE', dnd:'DO_NOT_DISTURB', offline:'OFFLINE' };
+        const st = data.discord_status || 'offline';
+        statusRow.innerHTML = `<div class="status-dot ${statusColors[st]}"></div><span>HARRI_FIRE // ${statusText[st] || st.toUpperCase()}</span>`;
+
+        const cards = [];
+
+        /* activities */
+        if (data.activities?.length) {
+            data.activities.forEach(act => {
+                if (act.type === 2) return;
+                const type = ['PLAYING','STREAMING','LISTENING','WATCHING','CUSTOM','COMPETING'][act.type] || 'ACTIVE';
+                const dot  = act.type === 1 ? 'dot-green' : 'dot-orange';
+                cards.push(`
+                    <div class="act-card">
+                        <div class="act-card-type">${type}</div>
+                        <div class="act-card-name">${act.name || '—'}</div>
+                        ${act.details ? `<div class="act-card-sub">${act.details}</div>` : ''}
+                        ${act.state   ? `<div class="act-card-sub" style="opacity:0.35">${act.state}</div>` : ''}
+                        <div class="act-card-dot ${dot}"></div>
+                    </div>`);
+            });
+        }
+
+        /* spotify */
+        if (data.listening_to_spotify && data.spotify) {
+            const sp = data.spotify;
+            cards.push(`
+                <div class="act-card full">
+                    <div class="act-card-type">LISTENING // SPOTIFY</div>
+                    <div class="act-card-name">${sp.song?.toUpperCase() || '—'}</div>
+                    <div class="act-card-sub">${sp.artist || ''}</div>
+                    ${sp.album ? `<div class="act-card-sub" style="opacity:0.35">${sp.album}</div>` : ''}
+                    <div class="act-card-dot dot-green"></div>
+                </div>`);
+        }
+
+        panel.innerHTML = cards.length
+            ? cards.join('')
+            : '<div class="act-no-signal">[ NO ACTIVE SESSIONS ]</div>';
+
+    } catch(e) {
+        panel.innerHTML = '<div class="act-no-signal">[ SIGNAL_LOST ]</div>';
+    }
+}
+setInterval(fetchDiscord, 15000);
+
+/* ── MUSIC ── */
+let musicPlaying = false;
+let musicStarted = false;
+
+function startMusic() {
+    const audio = document.getElementById('bg-music');
+    audio.volume = 0;
+    audio.play().then(() => {
+        musicPlaying = true;
+        musicStarted = true;
+        updateMusicBtn();
+        initVisualizer(audio);
+        // Fade in volume over 3s
+        let vol = 0;
+        const fade = setInterval(() => {
+            vol = Math.min(vol + 0.02, 0.4);
+            audio.volume = vol;
+            if (vol >= 0.4) clearInterval(fade);
+        }, 60);
+    }).catch(() => {
+        // Autoplay blocked — start on first user interaction
+        const tryStart = () => {
+            if (!musicStarted) startMusic();
+        };
+        document.addEventListener('click', tryStart, { once: true });
+        document.addEventListener('keydown', tryStart, { once: true });
+    });
+}
+
+function toggleMusic() {
+    const audio = document.getElementById('bg-music');
+    if (!musicStarted) {
+        // First interaction — start everything
+        audio.volume = 0.4;
+        audio.play().then(() => {
+            musicPlaying = true;
+            musicStarted = true;
+            updateMusicBtn();
+            initVisualizer(audio);
+        }).catch(() => {});
+        return;
+    }
+    if (musicPlaying) {
+        audio.pause();
+        musicPlaying = false;
+    } else {
+        audio.play();
+        musicPlaying = true;
+    }
+    updateMusicBtn();
+}
+
+function updateMusicBtn() {
+    const btn  = document.getElementById('music-btn');
+    const vBtn = document.getElementById('viz-mute-btn');
+
+    const iconUnmute    = document.getElementById('icon-unmute');
+    const iconMute      = document.getElementById('icon-mute');
+    const vizIconUnmute = document.getElementById('viz-icon-unmute');
+    const vizIconMute   = document.getElementById('viz-icon-mute');
+
+    if (musicPlaying) {
+        btn.classList.remove('muted');
+        iconUnmute.style.display    = '';
+        iconMute.style.display      = 'none';
+        vBtn.classList.remove('muted');
+        vizIconUnmute.style.display = '';
+        vizIconMute.style.display   = 'none';
+    } else {
+        btn.classList.add('muted');
+        iconUnmute.style.display    = 'none';
+        iconMute.style.display      = '';
+        vBtn.classList.add('muted');
+        vizIconUnmute.style.display = 'none';
+        vizIconMute.style.display   = '';
+    }
+}
+
+/* ── AUDIO VISUALIZER ── */
+let audioCtx = null, analyser = null, vizSource = null, vizRAF = null;
+
+function initVisualizer(audioEl) {
+    if (audioCtx) return; // already init
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 128;
+    analyser.smoothingTimeConstant = 0.82;
+    vizSource = audioCtx.createMediaElementSource(audioEl);
+    vizSource.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    drawViz();
+}
+
+function drawViz() {
+    const canvas = document.getElementById('viz-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    canvas.width  = W;
+    canvas.height = H;
+
+    const bufLen = analyser.frequencyBinCount;
+    const dataArr = new Uint8Array(bufLen);
+
+    function frame() {
+        vizRAF = requestAnimationFrame(frame);
+        analyser.getByteFrequencyData(dataArr);
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Dark BG
+        ctx.fillStyle = 'rgba(6,6,8,0.6)';
+        ctx.fillRect(0, 0, W, H);
+
+        const barW = W / bufLen;
+        const orange  = '#ff6600';
+        const orangeDim = 'rgba(255,102,0,0.3)';
+
+        for (let i = 0; i < bufLen; i++) {
+            const v = dataArr[i] / 255;
+            const barH = v * H;
+            const x = i * barW;
+
+            // Gradient per bar
+            const grad = ctx.createLinearGradient(x, H, x, H - barH);
+            grad.addColorStop(0, orangeDim);
+            grad.addColorStop(0.6, orange);
+            grad.addColorStop(1, '#fff');
+            ctx.fillStyle = grad;
+            ctx.fillRect(x, H - barH, barW - 1, barH);
+
+            // Glow on tall bars
+            if (v > 0.6) {
+                ctx.shadowColor = orange;
+                ctx.shadowBlur  = 8;
+                ctx.fillStyle   = orange;
+                ctx.fillRect(x, H - barH - 2, barW - 1, 2);
+                ctx.shadowBlur  = 0;
+            }
+        }
+
+        // Bottom line
+        ctx.strokeStyle = 'rgba(255,102,0,0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, H - 0.5);
+        ctx.lineTo(W, H - 0.5);
+        ctx.stroke();
+    }
+    frame();
+}
+
+// Idle wave animation when no audio context yet
+(function idleViz() {
+    const canvas = document.getElementById('viz-canvas');
+    if (!canvas || analyser) { if (!analyser) requestAnimationFrame(idleViz); return; }
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth || 300;
+    const H = canvas.offsetHeight || 80;
+    canvas.width = W; canvas.height = H;
+    let t = 0;
+    function idle() {
+        if (analyser) return; // real audio took over
+        requestAnimationFrame(idle);
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = 'rgba(6,6,8,0.6)';
+        ctx.fillRect(0, 0, W, H);
+        const bars = 64;
+        const bw = W / bars;
+        for (let i = 0; i < bars; i++) {
+            const v = (Math.sin(t * 0.04 + i * 0.4) * 0.5 + 0.5) * 0.25 + 0.02;
+            const bh = v * H;
+            ctx.fillStyle = 'rgba(255,102,0,0.25)';
+            ctx.fillRect(i * bw, H - bh, bw - 1, bh);
+        }
+        t++;
+    }
+    idle();
+})();
+</script>
+</body>
+</html>
