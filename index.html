@@ -18,9 +18,9 @@
             --eva-green: #6bff00;
             --hazard: repeating-linear-gradient(-45deg, var(--orange), var(--orange) 8px, #000 8px, #000 16px);
         }
-
+ 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
-
+ 
         body {
             background: var(--bg);
             color: var(--orange);
@@ -31,14 +31,14 @@
             text-transform: uppercase;
             font-size: 15px;
         }
-
+ 
         /* ── SCANLINES ── */
         body::after {
             content: '';
             position: fixed; inset: 0; z-index: 9000; pointer-events: none;
             background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
         }
-
+ 
         /* ══════════════════════════════
            1. AUTH GATE
         ══════════════════════════════ */
@@ -95,7 +95,7 @@
             background: var(--orange); color: #000;
             box-shadow: 0 0 40px var(--orange-glow);
         }
-
+ 
         /* ══════════════════════════════
            2. BG LAYERS
         ══════════════════════════════ */
@@ -112,7 +112,7 @@
             opacity: 0; pointer-events: none; color: var(--eva-green); z-index: 6000;
             letter-spacing: 0.1em;
         }
-
+ 
         /* ══════════════════════════════
            3. CROSSHAIR
         ══════════════════════════════ */
@@ -130,7 +130,7 @@
             transform: translate(-50%,-50%); pointer-events: none;
             z-index: 200000; mix-blend-mode: difference;
         }
-
+ 
         /* ══════════════════════════════
            4. MAIN HUD LAYOUT
         ══════════════════════════════ */
@@ -147,7 +147,7 @@
             transition: opacity 0.8s 0.4s;
         }
         .hud.active { opacity: 1; }
-
+ 
         /* ── TOP STRIP ── */
         .hud-top {
             grid-column: 1 / -1;
@@ -191,7 +191,7 @@
             font-family: 'Syncopate'; font-size: 1.15rem;
             letter-spacing: 3px; color: #fff;
         }
-
+ 
         /* ── LEFT PANEL ── */
         .hud-left {
             grid-column: 1; grid-row: 2;
@@ -201,7 +201,7 @@
             padding: 12px 0;
             gap: 0;
         }
-
+ 
         /* ── CENTER PANEL ── */
         .hud-center {
             grid-column: 2; grid-row: 2;
@@ -210,7 +210,7 @@
             padding: 12px 0;
             gap: 12px;
         }
-
+ 
         /* ── RIGHT PANEL ── */
         .hud-right {
             grid-column: 3; grid-row: 2;
@@ -220,7 +220,7 @@
             padding: 12px 0;
             gap: 12px;
         }
-
+ 
         /* ── PANEL BLOCK (reusable section inside panels) ── */
         .panel-block {
             border-bottom: 2px solid var(--border);
@@ -241,7 +241,7 @@
             width: 6px; height: 6px;
             background: var(--orange); opacity: 0.6;
         }
-
+ 
         /* ── PILOT CARD ── */
         .pilot-card { padding: 24px 20px 20px; border-bottom: 2px solid var(--border); margin-bottom: 12px; }
         .pilot-name-tag { font-size: 11px; letter-spacing: 3px; opacity: 0.4; margin-bottom: 8px; }
@@ -252,7 +252,7 @@
         }
         .pilot-meta { margin-top: 12px; font-size: 11px; opacity: 0.35; letter-spacing: 1px; line-height: 1.9; }
         .hazard-stripe { height: 4px; background: var(--hazard); opacity: 0.3; margin-top: 12px; }
-
+ 
         /* ── SYNC RATE ── */
         .sync-block { padding: 20px; border-bottom: 2px solid var(--border); }
         .sync-number {
@@ -268,7 +268,7 @@
             background: var(--orange); width: 0%;
             transition: width 0.15s; box-shadow: 0 0 10px var(--orange-glow);
         }
-
+ 
         /* ── TACTICAL DATA ── */
         .tactical-grid {
             display: grid; grid-template-columns: 1fr 1fr 1fr;
@@ -288,7 +288,7 @@
             background: var(--orange); opacity: 0.7;
             margin-bottom: 8px;
         }
-
+ 
         /* ── TERMINAL FEED ── */
         .terminal-feed {
             font-size: 11px; opacity: 0.45; overflow: hidden;
@@ -296,7 +296,7 @@
             flex: 1;
         }
         .log-line { padding: 3px 0; border-bottom: 1px solid rgba(255,102,0,0.04); letter-spacing: 1px; }
-
+ 
         /* ── DISCORD PANEL ── */
         .discord-status {
             display: flex; align-items: center; gap: 10px;
@@ -308,7 +308,7 @@
         .dot-yellow { background: #ffcc00; box-shadow: 0 0 8px #ffcc00; }
         .dot-orange { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
         .dot-grey   { background: #444; }
-
+ 
         .act-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
         }
@@ -331,7 +331,7 @@
         .act-card-sub  { font-size: 10px; color: var(--orange); opacity: 0.55; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .act-card-dot  { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; }
         .act-no-signal { font-size: 12px; opacity: 0.3; text-align: center; padding: 24px 0; letter-spacing: 3px; grid-column: 1 / -1; }
-
+ 
         /* ── BOTTOM NAV ── */
         .hud-nav {
             grid-column: 1 / -1; grid-row: 3;
@@ -366,19 +366,19 @@
             0%, 100% { text-shadow: 0 0 6px var(--orange), 0 0 14px var(--orange), 0 0 30px var(--orange-glow); }
             50%       { text-shadow: 0 0 10px var(--orange), 0 0 24px var(--orange), 0 0 50px var(--orange-glow), 0 0 80px var(--orange-glow); }
         }
-
+ 
         /* ══════════════════════════════
            5. MOBILE
         ══════════════════════════════ */
         @media (max-width: 768px) {
             *, *::before, *::after { cursor: auto !important; }
             body { overflow-y: auto; overflow-x: hidden; height: auto; perspective: none; }
-
+ 
             .ch-v, .ch-h, .ch-box { display: none; }
-
+ 
             .auth-box { padding: 32px 20px 28px; clip-path: none; }
             .auth-title { letter-spacing: 6px; font-size: 1.2rem; }
-
+ 
             .hud {
                 display: flex; flex-direction: column;
                 height: auto; padding-bottom: 90px;
@@ -394,19 +394,19 @@
             .top-meta-item { padding: 4px 12px 4px 0; border: none; }
             .top-right-bar { padding: 0; border: none; margin-left: 0; }
             #clock { font-size: 0.85rem; }
-
+ 
             .hud-left, .hud-center, .hud-right {
                 border: none; border-bottom: 2px solid var(--border);
             }
-
+ 
             .pilot-handle { font-size: 1.3rem; }
             .sync-number { font-size: 2rem; }
-
+ 
             .tactical-grid { grid-template-columns: 1fr 1fr; }
-
+ 
             .act-grid { grid-template-columns: 1fr; }
             .act-card.full { grid-column: 1; }
-
+ 
             .hud-nav {
                 height: auto;
                 flex-direction: column;
@@ -425,22 +425,22 @@
             .nav-id { display: none; }
             .hud { padding-bottom: 90px; }
         }
-
+ 
         @media (max-width: 420px) {
             .tactical-grid { grid-template-columns: 1fr; }
             .top-meta { display: none; }
             .nav-links { gap: 12px; }
             .nav-links a { font-size: 9px; }
         }
-
+ 
         /* ── GLOW ON HOVER ── */
-
+ 
         /* Nav links */
         .nav-links a:hover {
             opacity: 1; color: #fff; transform: translateY(-1px);
             text-shadow: 0 0 8px var(--orange), 0 0 20px var(--orange), 0 0 40px var(--orange-glow);
         }
-
+ 
         /* Pilot handle */
         .pilot-handle {
             transition: text-shadow 0.3s;
@@ -448,7 +448,7 @@
         .pilot-handle:hover {
             text-shadow: 0 0 10px var(--orange), 0 0 25px var(--orange), 0 0 50px var(--orange-glow);
         }
-
+ 
         /* Top brand H1 */
         .top-brand h1 {
             transition: text-shadow 0.3s;
@@ -456,7 +456,7 @@
         .top-brand h1:hover {
             text-shadow: 0 0 10px var(--orange), 0 0 25px var(--orange), 0 0 50px var(--orange-glow);
         }
-
+ 
         /* Top meta values */
         .top-meta-item .value {
             transition: text-shadow 0.3s;
@@ -464,7 +464,7 @@
         .top-meta-item:hover .value {
             text-shadow: 0 0 8px currentColor, 0 0 20px currentColor;
         }
-
+ 
         /* Panel labels */
         .panel-label {
             transition: text-shadow 0.3s, opacity 0.3s;
@@ -473,7 +473,7 @@
             opacity: 0.85;
             text-shadow: 0 0 8px var(--orange), 0 0 20px var(--orange-glow);
         }
-
+ 
         /* Tac cell headers */
         .tac-cell h3 {
             transition: text-shadow 0.3s, color 0.3s;
@@ -488,7 +488,7 @@
         .tac-cell:hover {
             background: rgba(255,102,0,0.05);
         }
-
+ 
         /* Discord status */
         .discord-status {
             transition: text-shadow 0.3s;
@@ -496,7 +496,7 @@
         .discord-status:hover {
             text-shadow: 0 0 8px var(--orange), 0 0 18px var(--orange-glow);
         }
-
+ 
         /* Act card name */
         .act-card-name {
             transition: text-shadow 0.3s;
@@ -511,7 +511,7 @@
             border-top-color: var(--orange);
             background: rgba(255,102,0,0.08);
         }
-
+ 
         /* Sync number */
         .sync-number {
             transition: text-shadow 0.3s;
@@ -519,7 +519,7 @@
         .sync-number:hover {
             text-shadow: 0 0 12px #fff, 0 0 30px rgba(255,255,255,0.5);
         }
-
+ 
         /* Clock */
         #clock {
             transition: text-shadow 0.3s;
@@ -527,7 +527,7 @@
         #clock:hover {
             text-shadow: 0 0 10px #fff, 0 0 25px rgba(255,255,255,0.5);
         }
-
+ 
         /* Terminal log lines */
         .log-line {
             transition: text-shadow 0.2s, opacity 0.2s;
@@ -536,7 +536,7 @@
             opacity: 0.9;
             text-shadow: 0 0 6px var(--orange), 0 0 15px var(--orange-glow);
         }
-
+ 
         /* Nav ID */
         .nav-id {
             transition: text-shadow 0.3s, opacity 0.3s;
@@ -545,54 +545,28 @@
             opacity: 0.7;
             text-shadow: 0 0 8px var(--orange), 0 0 20px var(--orange-glow);
         }
-
-        /* ── MUSIC BUTTON ── */
-        #music-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--orange);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px; letter-spacing: 2px;
-            padding: 4px 10px;
-            display: flex; align-items: center; gap: 6px;
-            cursor: pointer !important;
-            transition: all 0.2s;
-            text-transform: uppercase;
+ 
+        /* ── PERFORMANCE HINTS ── */
+        #cockpit {
+            will-change: transform;
+            contain: layout style;
         }
-        #music-btn:hover {
-            background: var(--orange-dim);
-            box-shadow: 0 0 12px var(--orange-glow);
+        #corruption-overlay {
+            will-change: opacity;
         }
-        #music-btn.muted {
-            opacity: 0.35;
-            border-color: rgba(255,102,0,0.2);
+        .ch-v, .ch-h, .ch-box {
+            will-change: transform;
         }
-        #music-icon {
-            font-size: 13px;
-            animation: musicPulse 1.2s ease-in-out infinite;
+        #viz-canvas {
+            will-change: contents;
         }
-        #music-btn.muted #music-icon {
-            animation: none;
+        .hud-right {
+            contain: paint;
         }
-        #music-btn svg {
-            display: block;
-            animation: musicPulse 1.2s ease-in-out infinite;
+        .terminal-feed {
+            contain: paint;
         }
-        #music-btn.muted svg {
-            animation: none;
-        }
-        #viz-mute-btn svg {
-            display: block;
-            animation: musicPulse 1.2s ease-in-out infinite;
-        }
-        #viz-mute-btn.muted svg {
-            animation: none;
-        }
-        @keyframes musicPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: 0.5; transform: scale(1.15); }
-        }
-
+ 
         /* ── AUDIO VISUALIZER ── */
         .viz-label {
             font-size: 9px; letter-spacing: 3px; opacity: 0.35;
@@ -646,7 +620,7 @@
     </style>
 </head>
 <body>
-
+ 
 <!-- AUTH GATE -->
 <div id="entry-gate">
     <div class="auth-box">
@@ -661,23 +635,23 @@
         <button class="auth-btn" onclick="bootHUD()">INITIALIZE</button>
     </div>
 </div>
-
+ 
 <!-- BG -->
 <div id="video-layer"><video id="bg-video" loop muted playsinline><source src="https://assets.mixkit.co/videos/preview/mixkit-urban-scenery-with-passing-trains-at-night-41584-large.mp4" type="video/mp4"></video></div>
-<audio id="bg-music" loop>
+<audio id="bg-music" loop crossorigin="anonymous">
     <source src="https://raw.githubusercontent.com/Harriblox/SOCIALS/main/BROOKLYNBLOODPOP.mp3" type="audio/mpeg">
 </audio>
 <div id="corruption-overlay"></div>
 <div class="berserk-label" id="berserk-ui">暴走</div>
-
+ 
 <!-- CROSSHAIR -->
 <div class="ch-v" id="ch-v"></div>
 <div class="ch-h" id="ch-h"></div>
 <div class="ch-box" id="ch-box"></div>
-
+ 
 <!-- HUD -->
 <div class="hud" id="cockpit">
-
+ 
     <!-- TOP STRIP -->
     <div class="hud-top">
         <div class="top-brand">
@@ -703,22 +677,10 @@
             </div>
         </div>
         <div class="top-right-bar">
-            <button id="music-btn" onclick="toggleMusic()" title="Toggle Music">
-                <svg id="icon-unmute" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-                </svg>
-                <svg id="icon-mute" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                    <line x1="23" y1="9" x2="17" y2="15"/>
-                    <line x1="17" y1="9" x2="23" y2="15"/>
-                </svg>
-            </button>
             <div id="clock">00:00:00</div>
         </div>
     </div>
-
+ 
     <!-- LEFT PANEL -->
     <div class="hud-left">
         <!-- Pilot card -->
@@ -732,7 +694,7 @@
                 SYNC: <span id="sync-left">0.0%</span>
             </div>
         </div>
-
+ 
         <!-- Sync rate -->
         <div class="sync-block" style="flex:1;">
             <div class="panel-label">SYNCHRO_RATE</div>
@@ -755,9 +717,9 @@
                 </button>
             </div>
         </div>
-
+ 
     </div>
-
+ 
     <!-- CENTER PANEL -->
     <div class="hud-center">
         <!-- DISCORD ACTIVITY — TOP -->
@@ -771,7 +733,7 @@
                 <div class="act-no-signal">[ AWAITING SIGNAL ]</div>
             </div>
         </div>
-
+ 
         <!-- TACTICAL DATA FILES — BOTTOM -->
         <div class="panel-block grow" style="border-bottom: 2px solid var(--border); overflow: auto; padding-bottom: 16px;">
             <div class="panel-label">TACTICAL_DATA_FILES</div>
@@ -785,7 +747,7 @@
             </div>
         </div>
     </div>
-
+ 
     <!-- RIGHT PANEL: MAGI LOG -->
     <div class="hud-right">
         <div class="panel-block grow">
@@ -793,9 +755,9 @@
             <div class="terminal-feed" id="log-content"></div>
         </div>
     </div>
-
+ 
 </div>
-
+ 
 <!-- NAV BAR -->
 <nav class="hud-nav">
     <div class="nav-links">
@@ -806,15 +768,15 @@
         <a href="#" onclick="alert('Discord: harri_fire'); return false;">DISCORD</a>
     </div>
     <div class="nav-copyright">
-        MADE BY HARRIBLOX <span>//</span> DESIGNED BY LAKSH
+        DESIGNED BY LAKSH & HARRIBLOX
     </div>
     <div class="nav-id">NERV_STATION_COMMAND // ID: PILOT-01-V20</div>
 </nav>
-
+ 
 <script>
 const DISCORD_ID = "827209669276598332";
 const isMobile = () => window.innerWidth <= 768;
-
+ 
 /* ── BOOT ── */
 function bootHUD() {
     ['m1','m2','m3'].forEach((id, i) =>
@@ -834,7 +796,7 @@ function bootHUD() {
         }, 900);
     }, 1100);
 }
-
+ 
 /* ── TERMINAL ── */
 function startTerminalFeed() {
     const msgs = ["LCL_SYNCING","MAGI_ONLINE","PACKET_RCVD","LINK_STABLE","CORE_34C",
@@ -848,60 +810,83 @@ function startTerminalFeed() {
         if (el.children.length > 24) el.lastChild.remove();
     }, 2200);
 }
-
+ 
 /* ── CROSSHAIR + TILT ── */
-const chV = document.getElementById('ch-v');
-const chH = document.getElementById('ch-h');
-const chBox = document.getElementById('ch-box');
+const chV     = document.getElementById('ch-v');
+const chH     = document.getElementById('ch-h');
+const chBox   = document.getElementById('ch-box');
 const cockpit = document.getElementById('cockpit');
 const overlay = document.getElementById('corruption-overlay');
 const berserkUI = document.getElementById('berserk-ui');
+const syncBar  = document.getElementById('sync-bar');
+const syncVal  = document.getElementById('sync-val');
+const syncLeft = document.getElementById('sync-left');
+ 
 let lx = 0, ly = 0;
-
+let mouseX = 0, mouseY = 0;
+let mousePending = false;
+let _isMobile = window.innerWidth <= 768;
+window.addEventListener('resize', () => { _isMobile = window.innerWidth <= 768; }, { passive: true });
+ 
 document.addEventListener('mousemove', e => {
-    if (isMobile()) return;
-    const x = e.clientX, y = e.clientY;
-    chV.style.left = x + 'px';
-    chH.style.top  = y + 'px';
+    if (_isMobile) return;
+    mouseX = e.clientX; mouseY = e.clientY;
+    if (!mousePending) {
+        mousePending = true;
+        requestAnimationFrame(processMouseMove);
+    }
+}, { passive: true });
+ 
+function processMouseMove() {
+    mousePending = false;
+    const x = mouseX, y = mouseY;
+ 
+    chV.style.left  = x + 'px';
+    chH.style.top   = y + 'px';
     chBox.style.left = x + 'px';
     chBox.style.top  = y + 'px';
-
-    const dx = x - innerWidth/2, dy = y - innerHeight/2;
-    const maxD = Math.hypot(innerWidth/2, innerHeight/2);
-    const pwr = Math.min(Math.hypot(dx,dy) / (maxD * 0.8), 1);
+ 
+    const dx = x - innerWidth / 2, dy = y - innerHeight / 2;
+    const maxD = Math.hypot(innerWidth / 2, innerHeight / 2);
+    const pwr = Math.min(Math.hypot(dx, dy) / (maxD * 0.8), 1);
     overlay.style.opacity = pwr;
-
-    if (pwr > 0.82) { document.body.style.color = 'var(--eva-green)'; berserkUI.style.opacity = (pwr-0.82)*5; }
-    else             { document.body.style.color = 'var(--orange)';    berserkUI.style.opacity = 0; }
-
-    cockpit.style.transform = `rotateX(${(innerHeight/2-y)/250}deg) rotateY(${(x-innerWidth/2)/250}deg)`;
-
-    const speed = Math.abs(x-lx) + Math.abs(y-ly);
+ 
+    if (pwr > 0.82) {
+        document.body.style.color = 'var(--eva-green)';
+        berserkUI.style.opacity = (pwr - 0.82) * 5;
+    } else {
+        document.body.style.color = 'var(--orange)';
+        berserkUI.style.opacity = 0;
+    }
+ 
+    cockpit.style.transform = `rotateX(${(innerHeight/2 - y) / 250}deg) rotateY(${(x - innerWidth/2) / 250}deg)`;
+ 
+    const speed = Math.abs(x - lx) + Math.abs(y - ly);
     lx = x; ly = y;
     const sync = Math.min(speed * 1.5, 100).toFixed(1);
-    document.getElementById('sync-bar').style.width = sync + '%';
-    document.getElementById('sync-val').textContent = sync + '%';
-    document.getElementById('sync-left').textContent = sync + '%';
-});
-
+    syncBar.style.width   = sync + '%';
+    syncVal.textContent   = sync + '%';
+    syncLeft.textContent  = sync + '%';
+}
+ 
 /* Touch sync */
 let ltx = 0, lty = 0;
 document.addEventListener('touchmove', e => {
-    if (!isMobile()) return;
+    if (!_isMobile) return;
     const t = e.touches[0];
-    const speed = Math.abs(t.clientX-ltx) + Math.abs(t.clientY-lty);
+    const speed = Math.abs(t.clientX - ltx) + Math.abs(t.clientY - lty);
     ltx = t.clientX; lty = t.clientY;
-    const sync = Math.min(speed*3, 100).toFixed(1);
-    document.getElementById('sync-bar').style.width = sync + '%';
-    document.getElementById('sync-val').textContent = sync + '%';
-    document.getElementById('sync-left').textContent = sync + '%';
+    const sync = Math.min(speed * 3, 100).toFixed(1);
+    syncBar.style.width  = sync + '%';
+    syncVal.textContent  = sync + '%';
+    syncLeft.textContent = sync + '%';
 }, { passive: true });
-
+ 
 /* ── CLOCK ── */
 setInterval(() => {
     document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8);
 }, 1000);
-
+ 
 /* ── DISCORD ── */
 async function fetchDiscord() {
     const panel = document.getElementById('discord-panel');
@@ -911,15 +896,15 @@ async function fetchDiscord() {
         const json = await res.json();
         const data = json.data;
         if (!data) { panel.innerHTML = '<div class="act-no-signal">[ NO DATA ]</div>'; return; }
-
+ 
         /* status row */
         const statusColors = { online:'dot-green', idle:'dot-yellow', dnd:'dot-orange', offline:'dot-grey' };
         const statusText   = { online:'ONLINE', idle:'IDLE', dnd:'DO_NOT_DISTURB', offline:'OFFLINE' };
         const st = data.discord_status || 'offline';
         statusRow.innerHTML = `<div class="status-dot ${statusColors[st]}"></div><span>HARRI_FIRE // ${statusText[st] || st.toUpperCase()}</span>`;
-
+ 
         const cards = [];
-
+ 
         /* activities */
         if (data.activities?.length) {
             data.activities.forEach(act => {
@@ -936,7 +921,7 @@ async function fetchDiscord() {
                     </div>`);
             });
         }
-
+ 
         /* spotify */
         if (data.listening_to_spotify && data.spotify) {
             const sp = data.spotify;
@@ -949,162 +934,168 @@ async function fetchDiscord() {
                     <div class="act-card-dot dot-green"></div>
                 </div>`);
         }
-
+ 
         panel.innerHTML = cards.length
             ? cards.join('')
             : '<div class="act-no-signal">[ NO ACTIVE SESSIONS ]</div>';
-
+ 
     } catch(e) {
         panel.innerHTML = '<div class="act-no-signal">[ SIGNAL_LOST ]</div>';
     }
 }
 setInterval(fetchDiscord, 15000);
-
+ 
 /* ── MUSIC ── */
 let musicPlaying = false;
 let musicStarted = false;
-
+ 
 function startMusic() {
+    // Called from bootHUD — autoplay almost always blocked, so just register
+    // a one-time listener on the NEXT user gesture to actually start.
     const audio = document.getElementById('bg-music');
+    const tryAutoplay = () => {
+        if (musicStarted) return;
+        _doStartMusic(audio);
+    };
+    // Try immediately (works if browser has engagement score)
     audio.volume = 0;
     audio.play().then(() => {
-        musicPlaying = true;
         musicStarted = true;
+        musicPlaying = true;
+        _fadeIn(audio);
         updateMusicBtn();
-        initVisualizer(audio);
-        // Fade in volume over 3s
-        let vol = 0;
-        const fade = setInterval(() => {
-            vol = Math.min(vol + 0.02, 0.4);
-            audio.volume = vol;
-            if (vol >= 0.4) clearInterval(fade);
-        }, 60);
+        _initViz(audio);
     }).catch(() => {
-        // Autoplay blocked — start on first user interaction
-        const tryStart = () => {
-            if (!musicStarted) startMusic();
-        };
-        document.addEventListener('click', tryStart, { once: true });
-        document.addEventListener('keydown', tryStart, { once: true });
+        // Autoplay blocked — fire on next real user click (not this boot click)
+        setTimeout(() => {
+            document.addEventListener('click', tryAutoplay, { once: true });
+        }, 500);
     });
 }
-
+ 
+function _doStartMusic(audio) {
+    musicStarted = true;
+    audio.volume = 0.4;
+    audio.play().then(() => {
+        musicPlaying = true;
+        updateMusicBtn();
+        _initViz(audio);
+    }).catch(err => console.warn('Music play failed:', err));
+}
+ 
+function _fadeIn(audio) {
+    let vol = 0;
+    const fade = setInterval(() => {
+        vol = Math.min(vol + 0.02, 0.4);
+        audio.volume = vol;
+        if (vol >= 0.4) clearInterval(fade);
+    }, 60);
+}
+ 
 function toggleMusic() {
     const audio = document.getElementById('bg-music');
+    // Resume suspended AudioContext first (Chrome requires this)
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+ 
     if (!musicStarted) {
-        // First interaction — start everything
-        audio.volume = 0.4;
-        audio.play().then(() => {
-            musicPlaying = true;
-            musicStarted = true;
-            updateMusicBtn();
-            initVisualizer(audio);
-        }).catch(() => {});
+        _doStartMusic(audio);
         return;
     }
     if (musicPlaying) {
         audio.pause();
         musicPlaying = false;
     } else {
-        audio.play();
+        audio.play().catch(err => console.warn('Resume failed:', err));
         musicPlaying = true;
     }
     updateMusicBtn();
 }
-
+ 
 function updateMusicBtn() {
-    const btn  = document.getElementById('music-btn');
     const vBtn = document.getElementById('viz-mute-btn');
-
-    const iconUnmute    = document.getElementById('icon-unmute');
-    const iconMute      = document.getElementById('icon-mute');
     const vizIconUnmute = document.getElementById('viz-icon-unmute');
     const vizIconMute   = document.getElementById('viz-icon-mute');
-
     if (musicPlaying) {
-        btn.classList.remove('muted');
-        iconUnmute.style.display    = '';
-        iconMute.style.display      = 'none';
         vBtn.classList.remove('muted');
         vizIconUnmute.style.display = '';
         vizIconMute.style.display   = 'none';
     } else {
-        btn.classList.add('muted');
-        iconUnmute.style.display    = 'none';
-        iconMute.style.display      = '';
         vBtn.classList.add('muted');
         vizIconUnmute.style.display = 'none';
         vizIconMute.style.display   = '';
     }
 }
-
+ 
 /* ── AUDIO VISUALIZER ── */
 let audioCtx = null, analyser = null, vizSource = null, vizRAF = null;
-
-function initVisualizer(audioEl) {
-    if (audioCtx) return; // already init
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 128;
-    analyser.smoothingTimeConstant = 0.82;
-    vizSource = audioCtx.createMediaElementSource(audioEl);
-    vizSource.connect(analyser);
-    analyser.connect(audioCtx.destination);
-    drawViz();
+ 
+function _initViz(audioEl) {
+    if (audioCtx) {
+        // Already created — just resume if suspended
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return;
+    }
+    try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        analyser.smoothingTimeConstant = 0.82;
+        vizSource = audioCtx.createMediaElementSource(audioEl);
+        vizSource.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        audioCtx.resume().then(() => drawViz());
+    } catch(e) {
+        console.warn('Visualizer init failed (likely CORS):', e);
+        // Audio still plays — visualizer just won't react to audio data
+    }
 }
-
+ 
+// Keep legacy name so nothing else breaks
+function initVisualizer(audioEl) { _initViz(audioEl); }
+ 
 function drawViz() {
     const canvas = document.getElementById('viz-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const W = canvas.offsetWidth;
-    const H = canvas.offsetHeight;
+    // Size canvas once; resize only on dimension change
+    let W = canvas.offsetWidth || 300;
+    let H = canvas.offsetHeight || 80;
     canvas.width  = W;
     canvas.height = H;
-
-    const bufLen = analyser.frequencyBinCount;
+ 
+    const bufLen  = analyser.frequencyBinCount;
     const dataArr = new Uint8Array(bufLen);
-
+    const barW    = W / bufLen;
+ 
     function frame() {
         vizRAF = requestAnimationFrame(frame);
         analyser.getByteFrequencyData(dataArr);
-
+ 
+        // Resize guard (cheap check)
+        if (canvas.offsetWidth !== W) {
+            W = canvas.offsetWidth; H = canvas.offsetHeight;
+            canvas.width = W; canvas.height = H;
+        }
+ 
         ctx.clearRect(0, 0, W, H);
-
-        // Dark BG
         ctx.fillStyle = 'rgba(6,6,8,0.6)';
         ctx.fillRect(0, 0, W, H);
-
-        const barW = W / bufLen;
-        const orange  = '#ff6600';
-        const orangeDim = 'rgba(255,102,0,0.3)';
-
+ 
         for (let i = 0; i < bufLen; i++) {
-            const v = dataArr[i] / 255;
+            const v    = dataArr[i] / 255;
             const barH = v * H;
-            const x = i * barW;
-
-            // Gradient per bar
-            const grad = ctx.createLinearGradient(x, H, x, H - barH);
-            grad.addColorStop(0, orangeDim);
-            grad.addColorStop(0.6, orange);
-            grad.addColorStop(1, '#fff');
-            ctx.fillStyle = grad;
+            const x    = i * barW;
+            // Flat color, alpha encodes brightness — no gradient objects
+            const alpha = 0.3 + v * 0.7;
+            ctx.fillStyle = v > 0.75
+                ? `rgba(255,255,255,${alpha})`
+                : `rgba(255,102,0,${alpha})`;
             ctx.fillRect(x, H - barH, barW - 1, barH);
-
-            // Glow on tall bars
-            if (v > 0.6) {
-                ctx.shadowColor = orange;
-                ctx.shadowBlur  = 8;
-                ctx.fillStyle   = orange;
-                ctx.fillRect(x, H - barH - 2, barW - 1, 2);
-                ctx.shadowBlur  = 0;
-            }
         }
-
+ 
         // Bottom line
         ctx.strokeStyle = 'rgba(255,102,0,0.25)';
-        ctx.lineWidth = 1;
+        ctx.lineWidth   = 1;
         ctx.beginPath();
         ctx.moveTo(0, H - 0.5);
         ctx.lineTo(W, H - 0.5);
@@ -1112,34 +1103,46 @@ function drawViz() {
     }
     frame();
 }
-
-// Idle wave animation when no audio context yet
+ 
+// Idle wave animation when no audio context yet — throttled to ~24 fps
 (function idleViz() {
     const canvas = document.getElementById('viz-canvas');
-    if (!canvas || analyser) { if (!analyser) requestAnimationFrame(idleViz); return; }
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const W = canvas.offsetWidth || 300;
-    const H = canvas.offsetHeight || 80;
+    let W = canvas.offsetWidth || 300;
+    let H = canvas.offsetHeight || 80;
     canvas.width = W; canvas.height = H;
+    const bars = _isMobile ? 32 : 48; // fewer bars on mobile
     let t = 0;
-    function idle() {
+    let last = 0;
+    const interval = 1000 / 24; // ~24 fps
+ 
+    function idle(ts) {
         if (analyser) return; // real audio took over
         requestAnimationFrame(idle);
+        if (ts - last < interval) return;
+        last = ts;
+ 
+        if (canvas.offsetWidth !== W) {
+            W = canvas.offsetWidth; H = canvas.offsetHeight;
+            canvas.width = W; canvas.height = H;
+        }
+ 
         ctx.clearRect(0, 0, W, H);
         ctx.fillStyle = 'rgba(6,6,8,0.6)';
         ctx.fillRect(0, 0, W, H);
-        const bars = 64;
         const bw = W / bars;
+        ctx.fillStyle = 'rgba(255,102,0,0.25)';
         for (let i = 0; i < bars; i++) {
-            const v = (Math.sin(t * 0.04 + i * 0.4) * 0.5 + 0.5) * 0.25 + 0.02;
+            const v  = (Math.sin(t * 0.04 + i * 0.4) * 0.5 + 0.5) * 0.25 + 0.02;
             const bh = v * H;
-            ctx.fillStyle = 'rgba(255,102,0,0.25)';
             ctx.fillRect(i * bw, H - bh, bw - 1, bh);
         }
         t++;
     }
-    idle();
+    requestAnimationFrame(idle);
 })();
 </script>
 </body>
 </html>
+ 
